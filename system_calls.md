@@ -259,7 +259,7 @@ This makes system calls slower than normal function calls.
 - 5 major types of system calls
 - `fork()` duplicates process
 - `exec()` replaces process
-- System calls are slower due to overhead
+
 
 ---
 
