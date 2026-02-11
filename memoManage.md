@@ -348,14 +348,6 @@ Helps prevent thrashing.
 
 ---
 
-# 📌 20. Quick Revision Summary
 
-- Memory management maps logical → physical address
-- Paging removes external fragmentation
-- Segmentation supports logical division
-- TLB improves access time
-- Demand paging loads pages on request
-- LRU better than FIFO
-- Thrashing reduces performance
 
----
+
