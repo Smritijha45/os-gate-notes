@@ -1,219 +1,266 @@
-📘 System Calls – GATE Notes
-🔹 1. What is a System Call?
+# 📘 System Calls – Complete GATE Notes
 
-A System Call is a mechanism that allows a user-level process to request services from the Operating System (Kernel).
+---
+
+## 📌 1. What is a System Call?
+
+A **System Call** is a mechanism that allows a **user-level process** to request services from the **Operating System (Kernel)**.
 
 It acts as an interface between:
 
-🧑‍💻 User Mode
+- 👤 User Mode  
+- 🖥️ Kernel Mode  
 
-🖥️ Kernel Mode
+Whenever a program needs to:
+- Access files
+- Create processes
+- Allocate memory
+- Communicate with devices  
 
-When a process needs OS services (like file access, memory allocation, process creation), it uses system calls.
+It must use a **system call**.
 
-🔹 2. Why System Calls Are Needed?
+---
+
+## 📌 2. Why Do We Need System Calls?
 
 User programs cannot directly access hardware because:
 
-It would compromise security
+- ❌ It violates security
+- ❌ It may corrupt memory
+- ❌ It can crash the OS
 
-It may corrupt system data
+Therefore, the OS provides controlled access through system calls.
 
-It can crash the OS
+---
 
-So the OS provides controlled access through system calls.
+## 📌 3. User Mode vs Kernel Mode
 
-🔹 3. User Mode vs Kernel Mode
-Feature	User Mode	Kernel Mode
-Privilege Level	Low	High
-Access Hardware	❌ No	✅ Yes
-Can Execute System Calls	Yes	Already in Kernel
-Crash Impact	Affects Process	Affects Entire System
+| Feature | User Mode | Kernel Mode |
+|----------|------------|-------------|
+| Privilege Level | Low | High |
+| Hardware Access | ❌ No | ✅ Yes |
+| Memory Access | Restricted | Full |
+| Crash Impact | Affects Process | Affects Whole System |
 
-👉 When a system call is invoked:
+### 🔁 Mode Switching
 
-CPU switches from User Mode → Kernel Mode
+When a system call is invoked:
 
-OS executes service
+1. CPU switches from **User Mode → Kernel Mode**
+2. OS executes requested service
+3. CPU switches back to **User Mode**
 
-CPU switches back to User Mode
+This switch is called a **Mode Switch**.
 
-🔹 4. How System Calls Work
-Steps:
+---
 
-User program calls library function (e.g., printf())
+## 📌 4. How a System Call Works
 
-Library function prepares system call
+### 🔄 Steps Involved
 
-Trap/Interrupt instruction executed
+1. User program calls a library function (e.g., `printf()`).
+2. Library function prepares system call parameters.
+3. A **trap instruction** is executed.
+4. CPU switches to Kernel Mode.
+5. OS performs requested operation.
+6. Result is returned to user program.
 
-Control transferred to kernel
+---
 
-Kernel performs task
+## 📌 5. Types of System Calls (Very Important for GATE)
 
-Returns result to user program
+### 1️⃣ Process Control
 
-🔹 5. Types of System Calls (Important for GATE)
-1️⃣ Process Control
-
-Used for managing processes.
+Used for creating and managing processes.
 
 Examples:
+- `fork()` → Create new process
+- `exec()` → Load new program
+- `exit()` → Terminate process
+- `wait()` → Wait for child process
 
-fork() → Create new process
+---
 
-exec() → Load new program
-
-exit() → Terminate process
-
-wait() → Wait for child process
-
-2️⃣ File Management
+### 2️⃣ File Management
 
 Used for file operations.
 
 Examples:
+- `open()`
+- `read()`
+- `write()`
+- `close()`
+- `lseek()`
 
-open()
+---
 
-read()
-
-write()
-
-close()
-
-lseek()
-
-3️⃣ Device Management
+### 3️⃣ Device Management
 
 Used to request and release devices.
 
 Examples:
+- `ioctl()`
+- `read()`
+- `write()`
 
-ioctl()
+---
 
-read()
+### 4️⃣ Information Maintenance
 
-write()
-
-4️⃣ Information Maintenance
-
-Used to get/set system data.
-
-Examples:
-
-getpid()
-
-alarm()
-
-sleep()
-
-time()
-
-5️⃣ Communication
-
-Used for Inter Process Communication (IPC)
+Used to get or set system data.
 
 Examples:
+- `getpid()`
+- `alarm()`
+- `sleep()`
+- `time()`
 
-pipe()
+---
 
-shmget() (Shared Memory)
+### 5️⃣ Communication (IPC – Inter Process Communication)
 
-msgget() (Message Queue)
+Examples:
+- `pipe()`
+- `shmget()` (Shared Memory)
+- `msgget()` (Message Queue)
+- `socket()`
 
-socket()
+---
 
-🔹 6. System Call vs Function Call
-Feature	Function Call	System Call
-Mode Switch	❌ No	✅ Yes
-Speed	Faster	Slower
-Access Hardware	❌ No	✅ Yes
-Example	printf()	write()
+## 📌 6. System Call vs Function Call
 
-👉 System calls are slower due to context switch overhead.
+| Feature | Function Call | System Call |
+|----------|---------------|-------------|
+| Mode Switch | ❌ No | ✅ Yes |
+| Speed | Faster | Slower |
+| Access Hardware | ❌ No | ✅ Yes |
+| Example | `printf()` | `write()` |
 
-🔹 7. Important GATE Concepts
-🔸 Trap
+> ⚠️ System calls are slower because of context switching overhead.
 
-Software interrupt used to enter kernel mode.
+---
 
-🔸 Context Switch
+## 📌 7. Important GATE Concepts
 
-Saving current process state and loading another.
+### 🔹 Trap
 
-🔸 Fork Example (Important)
-int pid = fork();
+A **software interrupt** used to transfer control from user mode to kernel mode.
 
-if(pid == 0)
-    printf("Child Process");
-else
-    printf("Parent Process");
+---
 
+### 🔹 Context Switch
 
-After fork():
+Saving the state of current process and loading another process.
 
-Parent and child execute independently
+Occurs during:
+- Scheduling
+- System calls
+- Interrupt handling
 
-Both continue from next instruction
+---
 
-🔹 8. Fork() Behavior Table (GATE Favorite)
-Return Value	Meaning
-0	In Child Process
->0	In Parent (Child PID)
-<0	Error
-🔹 9. Exec Family (Very Important)
+## 📌 8. fork() – Very Important for GATE
 
-exec() replaces current process image with new program.
+```c
+#include <stdio.h>
+#include <unistd.h>
 
-Example:
+int main() {
+    int pid = fork();
 
-execl("/bin/ls", "ls", NULL);
+    if (pid == 0)
+        printf("Child Process\n");
+    else
+        printf("Parent Process\n");
 
+    return 0;
+}
+```
 
-👉 After exec(), old code is replaced.
-👉 If successful, it does NOT return.
+### 🔎 Behavior of fork()
 
-🔹 10. Performance Insight
+- Creates a new child process.
+- Child gets a copy of parent's memory.
+- Both execute independently.
+
+---
+
+### 📊 fork() Return Values
+
+| Return Value | Meaning |
+|--------------|----------|
+| 0 | In Child Process |
+| > 0 | In Parent (Child PID) |
+| < 0 | Error |
+
+---
+
+## 📌 9. exec() – Important Concept
+
+The `exec()` system call:
+
+- Replaces the current process image with a new program.
+- Does NOT create a new process.
+- If successful, it does **NOT return**.
+
+### Example:
+
+```c
+#include <unistd.h>
+
+int main() {
+    execl("/bin/ls", "ls", NULL);
+    return 0;
+}
+```
+
+After `exec()`:
+- Old program code is completely replaced.
+
+---
+
+## 📌 10. fork() vs exec()
+
+| Feature | fork() | exec() |
+|----------|---------|---------|
+| Creates New Process | ✅ Yes | ❌ No |
+| Replaces Process Image | ❌ No | ✅ Yes |
+| Returns on Success | ✅ Yes | ❌ No |
+
+---
+
+## 📌 11. Performance Overhead in System Calls
 
 System call overhead includes:
 
-Mode switch
+- Mode switching
+- Parameter validation
+- Security checks
+- Context saving & restoring
 
-Parameter validation
+This makes system calls slower than normal function calls.
 
-Security check
+---
 
-Context saving/restoring
+## 📌 12. Important GATE Practice Areas
 
-🔹 11. GATE Exam Tips 🎯
+✔ Process tree problems using `fork()`  
+✔ Count number of processes after multiple forks  
+✔ Difference between `fork()` and `exec()`  
+✔ Mode switching concept  
+✔ Return values of system calls  
 
-✅ Difference between fork() and exec() is frequently asked
-✅ Return values of system calls are important
-✅ Mode switching concept is very important
-✅ Process tree questions based on fork()
-✅ Count number of processes after multiple forks
+---
 
-🔹 12. Quick Revision Summary
+## 📌 13. Quick Revision Summary
 
-System call = Interface between user & OS
+- System call = Interface between user & OS
+- Causes User Mode → Kernel Mode switch
+- 5 major types of system calls
+- `fork()` duplicates process
+- `exec()` replaces process
+- System calls are slower due to overhead
 
-Causes user → kernel mode switch
+---
 
-5 main types:
 
-Process Control
-
-File Management
-
-Device Management
-
-Information Maintenance
-
-Communication
-
-fork() duplicates process
-
-exec() replaces process
-
-Slower than function call
